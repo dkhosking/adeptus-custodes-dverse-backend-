@@ -7,7 +7,7 @@ app.use(express.json());
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Shrek is love, Shrek is life, bow down to the blood god, N2 on solana, gearheads', status: 'online', ogre: true });
+  res.json({ message: 'Shrek is love, Shrek is life, bow down to the blood god, N2 on solana, gearheads, test', status: 'online', ogre: true });
 });
 
 const PORT = 3000;
