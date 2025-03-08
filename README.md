@@ -5,3 +5,4 @@ test test
 
 test again
 crontab please
+die
