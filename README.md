@@ -5,4 +5,4 @@ test test
 
 test again
 crontab please
-die
+chmod my shrigga msake excutable yes crong job -1 yes correct paths yes please work my shrigga get they bread on them hoes or is will $bash these nutz
