@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
-import { fetchVideosData } from './fetchBackBlazeJson';
+import { fetchVideosData, FetchActiveVid } from './fetchBackBlazeJson';
 
 const app = express();
 app.use(cors());
@@ -13,8 +13,9 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/api/videos', async (req, res) => {
-  const data = await fetchVideosData()
-  res.json({out: data})
+  const data = await FetchActiveVid()
+  // be wary of. need to find way to make auto, will create problems otherwise
+  res.json(data)
 });
 
 const PORT = 3000;
