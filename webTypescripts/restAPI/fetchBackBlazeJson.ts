@@ -1,6 +1,12 @@
 import { start } from "repl";
+import { backTrace } from "./videoList";
+import { sourceVid } from "./backblazeInternal/source"
 
 
+import { 
+  Span,
+  VideoResponse,
+} from "./backblazeInternal/types";
 
 // this file is a bit of a mess. Will clean up later and add more sophisticated subsystems
 // soon i will move on to writing data
@@ -11,108 +17,72 @@ async function jsonGrab(url:string): Promise<any> {
 }
 
 
-interface TimeDict {
-  hour: number;
-  minute: number;
-}
-
-interface Span {
-  start: number
-  end: number;
-}
-
-interface VideoMessage {
-  HyperID: number;  // Make sure this matches the actual JSON structure
-}
 
 
-interface VideoSource {
-  HyperID: number;
-  span: Span;
-  url: string;
-}
-
-interface DisplayVid {
-  date: string;
-  quote: string;
-  url: string;
-}
-
-interface vidArr {
-  videos: DisplayVid[];
-}
-
-
-interface VideoResponse {
-  messages: VideoMessage[];
-}
-
-
-function withinMinuteHour(span: Span, currentMins:number) {
+function withinMiliSpan(span: Span, currentMili:number) {
 
   // in a better world n1 n2 n3
-  const startMins = span.start;
-  const endMins = span.end;
+  const startMili = span.start;
+  const endMili = span.end;
 
 
 
-  if (startMins <= endMins) {
-    return currentMins >= startMins && currentMins <= endMins; 
+  if (startMili <= endMili) {
+    return currentMili >= startMili && currentMili <= endMili; 
   } else {
-    return currentMins >= startMins || currentMins <= endMins;  
+    return currentMili >= startMili || currentMili <= endMili;  
   }
 
 }
 
- async function FetchActiveVid(): Promise<vidArr> {
-
-  const minutesInminute:number = 60
-  const hoursInDay:number = 24
-  const SpanBuilder = (start: number, end:number): Span => {
-    return {start: start, end: end}
-  }
 
 
-  const TimeDictBuilder = (point: Date): TimeDict => {
-    return {hour: point.getHours(), minute: point.getMinutes()}
-  }
 
+
+
+
+ async function FetchActiveVid() {
+
+  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
 
 
   const now = new Date()
 
-  const toMinutes = (time: TimeDict) => (time.hour * minutesInminute + time.minute) % (hoursInDay * minutesInminute);
 
-  const currentMins: number = toMinutes(TimeDictBuilder(now))
+  const currentMili: number = now.getMilliseconds()
 
-  
-
-
-// Will route trough api find Json by name later
-  const SourceDict: any = await jsonGrab("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
-  const Source: VideoSource[] = SourceDict.messages
   const hiddenVideos: VideoResponse = await jsonGrab("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/sexvideos.json")
-  for (const item of hiddenVideos.messages) {
-    const HyperID: number = item.HyperID
-    const IndexHyperID: number = HyperID -1
+  let test = new sourceVid()
 
-    // this may vary, as i store varing things in source. Will define functions at later time.
-    const correspondingHidden: VideoSource = Source[IndexHyperID]
-    const correspondingSpan: Span = correspondingHidden.span;
-    console.log(correspondingSpan)
-    if (withinMinuteHour(correspondingSpan, currentMins)) {
-      return {videos: [{url: correspondingHidden.url, date:"0-0-0", quote:" "}]}
+
+  test.parseByGivenID(hiddenVideos.messages, "midnight")
+
+  const findCurrentHidden = (item: any, out:any[]) => {
+
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    const miliOffset = now.getTime()
+
+    item.span = {
+      start: miliOffset + item.span.start,
+      end: miliOffset + item.span.end
     }
 
-
+    const itemSpan: Span = item.span
+    if (withinMiliSpan(itemSpan, currentMili)) {
+      out.push(item)
+    }
   }
 
-
-
-  return await fetchVideosData();
+  let out: Array<any> = await test.parseByGivenIDsHigherOrder(hiddenVideos.messages, "midnight", findCurrentHidden)
+  if (out.length > 0) {
+    return {videos: out}
+  }
+  return sourceVid.returnDataTrace()
 }
 
  async function fetchVideosData() {
-  return await jsonGrab("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/DverseData_videos.json")
+  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
+  return sourceVid.returnDataTrace()
 }
 export { FetchActiveVid, fetchVideosData };

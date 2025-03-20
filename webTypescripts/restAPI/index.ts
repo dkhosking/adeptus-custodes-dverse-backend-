@@ -11,9 +11,17 @@ app.use(express.json());
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Shrek is love, Shrek is life, testasdsad N2 on solana, gearheads, test', status: 'online', ogre: true });
 });
+app.get('/api/test2', async (req, res) => {
+  const data = await FetchActiveVid()
+
+  // be wary of. need to find way to make auto, will create problems otherwise
+  res.json(data)
+});
+
 
 app.get('/api/videos', async (req, res) => {
   const data = await FetchActiveVid()
+
   // be wary of. need to find way to make auto, will create problems otherwise
   res.json(data)
 });
