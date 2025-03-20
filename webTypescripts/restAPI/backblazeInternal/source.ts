@@ -35,12 +35,6 @@ class sourceVid {
     // should add min max later for backtrace, more modular code
     static backlog(videoData: DisplayVid[], mili:number) {
       let index = videoData.length -1
-
-
-      if (videoData[index].span.start < mili) {
-        return index
-      }
-      index--;
       
       while (index >= 0) {
         let current: number = videoData[index].span.start
@@ -53,8 +47,9 @@ class sourceVid {
       return 0
     }
 
-
-
+    // kommer kalla backlog här. För brute sort kan jag använda C/c++ eller rust. 
+    // Tror inte att det är så lät att decimenera däremot. använder bara det för sorteringsteget.
+    // behöver dock inte är bara roligt
     static backTrace(videoData: vidArr, today: Date) {
       const nowMili: number = today.getTime()
       const videoDataArray: DisplayVid[] = videoData.videos

@@ -74,6 +74,7 @@ function add(data:any, og: any, sort?: (data: any, og:any) => any) {
 
 }
 
+// will fix later
 async function updateUnsortedJson(data: any, og:any, fileName:string): Promise<boolean> {
   
   await b2.authorize();
