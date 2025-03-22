@@ -1,11 +1,12 @@
 import { start } from "repl";
 import { backTrace } from "./videoList";
-import { sourceVid } from "./backblazeInternal/source"
+import { sourceVid } from "./backblazeInternal/sourceVid"
 
 
 import { 
   Span,
   VideoResponse,
+  output
 } from "./backblazeInternal/types";
 
 // this file is a bit of a mess. Will clean up later and add more sophisticated subsystems
@@ -37,13 +38,8 @@ function withinMiliSpan(span: Span, currentMili:number) {
 
 
 
-
-
-
-
  async function FetchActiveVid() {
 
-  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
 
 
   const now = new Date()
@@ -78,11 +74,31 @@ function withinMiliSpan(span: Span, currentMili:number) {
   if (out.length > 0) {
     return {videos: out}
   }
-  return sourceVid.returnDataTrace()
+
+
+  const outSplice = (original: output, additional: output) => {
+
+    const combined = original.videos.slice(); // Create copy
+    additional.videos.forEach(item => combined.push(item));
+
+    return {videos: combined }
+  } 
+
+  const eras = await fetchEras()
+  const output = ((await sourceVid.returnDataTrace()).videos)
+  if (eras.length > 0) {
+    output.push(eras[0])
+  }
+
+  return output
 }
 
  async function fetchVideosData() {
-  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
   return sourceVid.returnDataTrace()
 }
-export { FetchActiveVid, fetchVideosData };
+
+
+async function fetchEras() {
+  return sourceVid.parseHyperIDType("era")
+}
+export { FetchActiveVid, fetchVideosData, fetchEras };

@@ -12,6 +12,7 @@ export interface Span {
     date: string;
     quote: string;
     url: string;
+    music: string;
     span: Span;
     HyperTypeId: string;
     HyperID: number;
@@ -28,6 +29,12 @@ export interface Span {
   export interface SourceDictType {
     videos: DisplayVid[];
   }
+
+
+  export interface output {
+    videos: any[];
+  }
+  
   
   export interface TimeDict {
     hour: number;

@@ -1,15 +1,22 @@
 import express from 'express';
 import cors from 'cors';
-
-import { fetchVideosData, FetchActiveVid } from './fetchBackBlazeJson';
+import { sourceVid } from "./backblazeInternal/sourceVid"
+import { fetchVideosData, FetchActiveVid, fetchEras } from './fetchBackBlazeJson';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+(async function init() {
+  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
+  // Function body
+})();  // 
+
+
 // Test endpoint
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Shrek is love, Shrek is life, testasdsad N2 on solana, gearheads, test', status: 'online', ogre: true });
+  res.json({ message: 'Shrek is love, Shrek is lifsssse, testasdsad N2 on solana, gearheads, test', status: 'online', ogre: true });
 });
 app.get('/api/test2', async (req, res) => {
   const data = await FetchActiveVid()
@@ -22,8 +29,28 @@ app.get('/api/test2', async (req, res) => {
 app.get('/api/videos', async (req, res) => {
   const data = await FetchActiveVid()
 
+
   res.json(data)
 });
+
+
+app.get('/api/era', async (req, res) => {
+  const data =  await fetchEras()
+
+
+  res.json(data)
+});
+
+
+
+app.get('/api/currentMusic', async (req, res) => {
+  const data =  await fetchEras()
+
+
+  res.json(  data[0].music)
+});
+
+
 
 
   /*

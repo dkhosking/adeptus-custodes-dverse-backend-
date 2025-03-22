@@ -1,20 +1,16 @@
 import B2 from 'backblaze-b2';
 import { type Request, type Response } from 'express';
 
-import { sourceVid } from "./source"
+import { sourceVid } from "./sourceVid"
 
 import { 
   Span,
   VideoMessage,
   DisplayVid,
-  vidArr,
-  VideoResponse,
-  SourceDictType,
-  TimeDict,
-  ApiResponse,
-  VideoProcessor 
+
 } from './types';
 import { json } from 'stream/consumers';
+import { jsonOverseer } from './jsonOverseer';
 
 
 
@@ -27,7 +23,6 @@ const b2 = new B2({
 // vidarr stupid smh
 function timeSort(data: DisplayVid[], og:Array<DisplayVid>) {
 
-  sourceVid.create("https://dverse.s3.eu-central-003.backblazeb2.com/DverseData/VidSource.json")
   // it  that the added element is in the future, or it is infact almost certain
   // inspite of this i wish to retain future compatibility should i decide to make a timeline
 
@@ -72,31 +67,20 @@ function add(data:any, og: any, sort?: (data: any, og:any) => any) {
     }
     throw new Error('Well my dear shrigga, you have attempted a merge of incomaptible content');
 
-}
+} 
 
 // will fix later
-async function updateUnsortedJson(data: any, og:any, fileName:string): Promise<boolean> {
+async function updatesortedJson(data: any, og:any, fileName:string): Promise<boolean> {
   
   await b2.authorize();
 
 
   const addedData = add(data, og, timeSort);
-  const jsonString = JSON.stringify(addedData, null, 2);
-  const buffer = Buffer.from(jsonString);
-
-  const { data: { uploadUrl, authorizationToken } } = await b2.getUploadUrl({
-    bucketId: process.env.B2_BUCKET_ID ?? ''
-  });
 
 
-  // will add find url by filename etc later 
-  await b2.uploadFile({
-    uploadUrl,
-    uploadAuthToken: authorizationToken,
-    fileName: `DverseData/${fileName}.json`,
-    data: buffer,
-    contentType: 'application/json'
-  });
+
+  jsonOverseer.uploadJsonFile("source", addedData)
+
 
   return true;
   

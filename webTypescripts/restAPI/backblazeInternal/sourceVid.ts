@@ -54,7 +54,6 @@ class sourceVid {
       const nowMili: number = today.getTime()
       const videoDataArray: DisplayVid[] = videoData.videos
       let index: number = videoDataArray.length -1 
-      let out: DisplayVid[] = []
       let minDisSmal = Infinity
       let currentMinWors: DisplayVid[] = []
     
@@ -94,14 +93,14 @@ class sourceVid {
     
   
     
-    equals(HyperTypeId: string, item:DisplayVid) {
+    static equals(HyperTypeId: string, item:DisplayVid) {
       if (item.HyperTypeId === HyperTypeId) {
         return true
       }
     }
   
   
-    async parseHyperIDType(type: string) {
+    static async parseHyperIDType(type: string) {
       return this.parseIDFiler(type, this.equals.bind(this))
     
     }
@@ -115,7 +114,7 @@ class sourceVid {
     }
     
   
-    async parseIDFiler(type: string, cond: Function ) {
+    static async parseIDFiler(type: string, cond: Function ) {
       let out: DisplayVid[] = []
       for (const item of (sourceVid.source).videos) {
   
