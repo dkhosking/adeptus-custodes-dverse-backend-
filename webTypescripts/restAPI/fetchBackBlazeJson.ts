@@ -76,13 +76,6 @@ function withinMiliSpan(span: Span, currentMili:number) {
   }
 
 
-  const outSplice = (original: output, additional: output) => {
-
-    const combined = original.videos.slice(); // Create copy
-    additional.videos.forEach(item => combined.push(item));
-
-    return {videos: combined }
-  } 
 
   const eras = await fetchEras()
   const output = ((await sourceVid.returnDataTrace()).videos)

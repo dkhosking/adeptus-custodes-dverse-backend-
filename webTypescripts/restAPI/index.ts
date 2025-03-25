@@ -1,10 +1,22 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { sourceVid } from "./backblazeInternal/sourceVid"
 import { fetchVideosData, FetchActiveVid, fetchEras } from './fetchBackBlazeJson';
 
 const app = express();
-app.use(cors());
+
+app.use((req, res, next) => {
+
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.dverse.se');
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  next();
+
+});
+
 app.use(express.json());
 
 
@@ -16,7 +28,7 @@ app.use(express.json());
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Shrek is love, Shrek is lifsssse, testasdsad N2 on solana, gearheads, test', status: 'online', ogre: true });
+  res.json({ message: 'Shrek is love, Shrek is yo, testasdsad N2 on solana, gearheads, test', status: 'online', ogre: true });
 });
 app.get('/api/test2', async (req, res) => {
   const data = await FetchActiveVid()

@@ -62,9 +62,20 @@ class sourceVid {
       // ska göra så att server returnerar detta sen + plus en serie shit posts som dymiskt upptateras
     
       while (index >= 0) {
-        const vid = videoDataArray[index]
-        console.log(vid)
-        const vidSpan: Span = vid.span;
+        let vid = videoDataArray[index]
+
+
+        let vidSpan: Span = vid.span;
+
+
+        if (vid.HyperTypeId == "dailyVid" ) {
+          vidSpan.start = (new Date(vid.date)).getTime()
+          vidSpan.end = vid.span.start + (86400000)
+        }
+
+        vid.span = vidSpan
+
+
         const vidDate: number = vidSpan.start
     
         const diff: number =  nowMili - vidSpan.start
